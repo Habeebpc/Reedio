@@ -1,0 +1,39 @@
+name: CI/CD
+
+on:
+  push:
+    # branches: [taxinvoice]
+    branches: [development]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          mkdir logs
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Tests
+        run: |
+          python manage.py test
+
+      - name: Dev enfono CD
+        uses: peterkimzz/aws-ssm-send-command@1.0.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID  }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
+          aws-region: ap-south-1
+          instance-ids: ${{ secrets.INSTANCE_ID  }}
+          comment: Deploy the development branch
+          working-directory: /home/ubuntu/boilerplate-backend/boilerplate
+          command: /bin/sh ./deploy.sh
