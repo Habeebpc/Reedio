@@ -1,6 +1,7 @@
 from django.urls import path
-from user_auth.views import LoginView, PasswordResetView, LogoutView
-from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from user_auth.views import LoginView, PasswordResetView, LogoutView, \
+     TokenRefreshView
+from rest_framework_simplejwt.views import  TokenVerifyView
 
 
 urlpatterns = [

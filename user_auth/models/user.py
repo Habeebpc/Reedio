@@ -17,6 +17,7 @@ class Manager(UserManager):
 class User(AbstractUser):
     name = models.CharField(max_length=200)
     mobile = models.CharField(max_length=12)
+    is_blocked_user = models.BooleanField(default=False)
    
     def __str__(self):
         return self.username
@@ -37,6 +38,7 @@ class AbstractModel(models.Model):
     date_added = models.DateTimeField(db_index=True, auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
+
 
     class Meta:
         abstract = True

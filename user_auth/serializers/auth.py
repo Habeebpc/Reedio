@@ -6,6 +6,10 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from user_auth.models import User
 from django.core.cache import cache
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+import jwt
+
+
 
 error_logger = logging.getLogger('error_logger')
 
@@ -93,3 +97,14 @@ class UserPasswordResetSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return user
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        access_token = data['access']
+        jwt_secret = settings.SIMPLE_JWT.get('SIGNING_KEY')
+        jti = jwt.decode(access_token, jwt_secret,
+                         algorithms=["HS256"])['jti']
+        cache.set(jti, timeout=1728000)
+        return data

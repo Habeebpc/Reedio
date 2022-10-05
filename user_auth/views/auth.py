@@ -2,7 +2,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 from user_auth.permission import IsAuthenticatedUser
 from boilerplate.response import SuccessResponse, ErrorResponse
-from user_auth.serializers import AuthSerializer, UserPasswordResetSerializer
+from user_auth.serializers import AuthSerializer, UserPasswordResetSerializer,\
+    CustomTokenRefreshSerializer
 from django.core.cache import cache
 from django.conf import settings
 import jwt
@@ -60,3 +61,15 @@ class PasswordResetView(CreateAPIView):
         if reset_serializer.errors.get('non_field_errors'):
             message = reset_serializer.errors["non_field_errors"][0]
         return ErrorResponse(message=message)
+
+
+class TokenRefreshView(CreateAPIView):
+    serializer_class = CustomTokenRefreshSerializer
+
+    def post(self, request):
+        serializer = CustomTokenRefreshSerializer(data=request.data)
+        if serializer.is_valid():
+            return SuccessResponse(data=serializer.validated_data,
+                                   message="Login successful")
+
+        return ErrorResponse(message="Error")
