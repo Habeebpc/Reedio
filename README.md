@@ -1,7 +1,7 @@
 # boilerplate-backend
 ## _ERP Application Backend_
 
-This is an application build using Python Django and Django REST framework.
+This is an application build using Python Django and Django REST framework. lo
 
 ## Cloning the Repository and moving to the project level
 
