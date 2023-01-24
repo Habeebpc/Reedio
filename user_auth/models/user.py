@@ -16,6 +16,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=200)
     mobile = models.CharField(max_length=12)
     designation = models.CharField(max_length=200, null=True, blank=True)
+    profile_photo = models.URLField(null=True, blank=True)
     is_blocked_user = models.BooleanField(default=False)
 
     def __str__(self):

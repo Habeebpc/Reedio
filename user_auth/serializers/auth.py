@@ -10,7 +10,6 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 import jwt
 
 
-
 error_logger = logging.getLogger('error_logger')
 
 
@@ -98,6 +97,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
         user.save()
         return user
 
+
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 
     def validate(self, attrs):
@@ -108,3 +108,33 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
                          algorithms=["HS256"])['jti']
         cache.set(jti, timeout=1728000)
         return data
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'name', 'mobile',
+                  'designation', 'profile_photo', 'password')
+
+    def create(self, validated_data):
+        instance = User.objects.create_user(**validated_data)
+        return instance
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'name', 'mobile',
+                  'designation', 'profile_photo', 'password')
+
+    def update(self, instance, validated_data):
+        if validated_data.get('password'):
+            password = validated_data.pop('password')
+            instance.set_password(password)
+        instance = super(UserUpdateSerializer, self).update(instance,
+                                                            validated_data)
+        return instance

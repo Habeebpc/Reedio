@@ -1,12 +1,25 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView
+)
 from rest_framework.views import APIView
 from user_auth.permission import IsAuthenticatedUser
-from tech_plotz.response import SuccessResponse, ErrorResponse
-from user_auth.serializers import AuthSerializer, UserPasswordResetSerializer,\
-    CustomTokenRefreshSerializer
+from tech_plotz.response import (
+    SuccessResponse,
+    ErrorResponse
+)
+from user_auth.serializers import (
+    AuthSerializer,
+    UserPasswordResetSerializer,
+    CustomTokenRefreshSerializer,
+    UserCreateSerializer,
+    UserUpdateSerializer
+)
 from django.core.cache import cache
 from django.conf import settings
 import jwt
+from user_auth.models import User
 
 
 class LoginView(CreateAPIView):
@@ -73,3 +86,20 @@ class TokenRefreshView(CreateAPIView):
                                    message="Login successful")
 
         return ErrorResponse(message="Error")
+
+
+class UsersListCreateView(ListCreateAPIView):
+    # permission_classes = (IsAuthenticatedUser, )
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+
+
+class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticatedUser, )
+    queryset = User.objects.all()
+    serializer_class = UserUpdateSerializer
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return SuccessResponse(message="User deleted successfully")
