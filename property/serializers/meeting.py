@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from plot.models import Meeting
+from property.models import Meeting
 
 
 class MeetingListSerializer(serializers.ModelSerializer):

@@ -1,8 +1,8 @@
 from django.urls import path
 
-from plot.views import (
-    PlotListCreateView,
-    PlotRetrieveUpdateDestroyView,
+from property.views import (
+    PropertyListCreateView,
+    PropertyRetrieveUpdateDestroyView,
     MeetingListCreateView,
     MeetingRetrieveUpdateDestroyView,
     TransactionCategoryListCreateView,
@@ -11,8 +11,9 @@ from plot.views import (
     TransactionRetrieveUpdateDestroyView,
 )
 urlpatterns = [
-    path('plots/', PlotListCreateView.as_view(), name='plot-list-create'),
-    path('plots/<int:pk>/', PlotRetrieveUpdateDestroyView.as_view(),
+    path('properties/', PropertyListCreateView.as_view(),
+         name='Property-list-create'),
+    path('property/<int:pk>/', PropertyRetrieveUpdateDestroyView.as_view(),
          name='plot-retrieve-update-destroy'),
     path('meetings/', MeetingListCreateView.as_view(), name='meeting-list-create'),
     path('meetings/<int:pk>/', MeetingRetrieveUpdateDestroyView.as_view(),

@@ -27,7 +27,7 @@ url_patterns = [
     path('api/admin/', admin.site.urls),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='docs'),
     path('api/auth/', include('user_auth.urls')),
-    path('api/common/', include('plot.urls')),
+    path('api/common/', include('property.urls')),
    
 
 ]

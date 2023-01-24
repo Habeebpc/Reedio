@@ -1,4 +1,4 @@
-from plot.models import Meeting
+from property.models import Meeting
 
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -6,7 +6,7 @@ from rest_framework.generics import (
 )
 from user_auth.permission import IsAuthenticatedUser
 
-from plot.serializers import (
+from property.serializers import (
     MeetingCreateSerializer,
     MeetingListSerializer
 )

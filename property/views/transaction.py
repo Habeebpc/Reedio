@@ -1,4 +1,4 @@
-from plot.models import (
+from property.models import (
     TransactionCategory,
     Transaction,
 )
@@ -9,7 +9,7 @@ from rest_framework.generics import (
 )
 from user_auth.permission import IsAuthenticatedUser
 
-from plot.serializers import (
+from property.serializers import (
     TransactionCategorySerializer,
     TransactionSerializer
 )

@@ -1,16 +1,19 @@
 from rest_framework import serializers
-from plot.models import Plot
+from property.models import (
+    TransactionCategory,
+    Transaction,
+)
 
 
-class PlotListSerializer(serializers.ModelSerializer):
+class TransactionCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Plot
+        model = TransactionCategory
         fields = '__all__'
 
 
-class PlotCreateSerializer(serializers.ModelSerializer):
+class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Plot
+        model = Transaction
         exclude = ('created_by', 'created_date')
 
     def create(self, validated_data):
