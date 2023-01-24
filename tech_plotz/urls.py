@@ -10,9 +10,9 @@ from .views import index
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="boilerplate API",
+        title="tech_plotz API",
         default_version='v1',
-        description="API Documentation for boilerplate App",
+        description="API Documentation for tech_plotz App",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="developer@enfono.co.in"),
         license=openapi.License(name="BSD License"),
@@ -35,12 +35,12 @@ url_patterns = [
 urlpatterns = url_patterns
 if settings.ENVIRONMENT == 'dev':
     urlpatterns = [
-        path('api_boilerplate/', include(url_patterns)),
+        path('api_tech_plotz/', include(url_patterns)),
     ]
 
 elif settings.ENVIRONMENT == 'uat':
     urlpatterns = [
-        path('uat/api_boilerplate/', include(url_patterns)),
+        path('uat/api_tech_plotz/', include(url_patterns)),
     ]
 
 if settings.DEBUG:

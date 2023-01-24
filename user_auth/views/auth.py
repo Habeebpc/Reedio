@@ -1,7 +1,7 @@
 from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 from user_auth.permission import IsAuthenticatedUser
-from boilerplate.response import SuccessResponse, ErrorResponse
+from tech_plotz.response import SuccessResponse, ErrorResponse
 from user_auth.serializers import AuthSerializer, UserPasswordResetSerializer,\
     CustomTokenRefreshSerializer
 from django.core.cache import cache

@@ -3,9 +3,9 @@
 # from celery.schedules import crontab
 
 # # set the default Django settings module for the 'celery' program.
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'boilerplate.settings')
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tech_plotz.settings')
 
-# app = Celery('boilerplate')
+# app = Celery('tech_plotz')
 
 # # Using a string here means the worker will not have to
 # # pickle the object when using Windows.

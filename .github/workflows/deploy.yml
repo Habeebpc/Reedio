@@ -35,5 +35,5 @@ jobs:
           aws-region: ap-south-1
           instance-ids: ${{ secrets.INSTANCE_ID  }}
           comment: Deploy the development branch
-          working-directory: /home/ubuntu/boilerplate-backend/boilerplate
+          working-directory: /home/ubuntu/tech_plotz-backend/tech_plotz
           command: /bin/sh ./deploy.sh

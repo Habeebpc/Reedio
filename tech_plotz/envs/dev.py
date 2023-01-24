@@ -3,8 +3,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 print('Mode : Dev')
 
-STATIC_URL = '/api_boilerplate/api/static/'
-MEDIA_URL = '/api_boilerplate/api/media/'
+STATIC_URL = '/api_tech_plotz/api/static/'
+MEDIA_URL = '/api_tech_plotz/api/media/'
 # Rest settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -14,9 +14,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
     'EXCEPTION_HANDLER':
-        'boilerplate.config.exception_handler.CustomExceptionHandler',
+        'tech_plotz.config.exception_handler.CustomExceptionHandler',
 
-    'DEFAULT_RENDERER_CLASSES': ['boilerplate.config.renderers.CustomJSONRenderer'],
+    'DEFAULT_RENDERER_CLASSES': ['tech_plotz.config.renderers.CustomJSONRenderer'],
 
 }
 

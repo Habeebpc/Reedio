@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'user_auth',
+    'plot'
     
 ]
 
@@ -50,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'boilerplate.urls'
+ROOT_URLCONF = 'tech_plotz.urls'
 AUTH_USER_MODEL = 'user_auth.User'
 
 # CORS setup
@@ -60,7 +61,7 @@ CORS_ALLOW_HEADERS = default_headers + ('cache-control',)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'boilerplate/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'tech_plotz/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'boilerplate.wsgi.application'
+WSGI_APPLICATION = 'tech_plotz.wsgi.application'
 
 
 # Database
@@ -115,9 +116,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
     'EXCEPTION_HANDLER':
-        'boilerplate.config.exception_handler.CustomExceptionHandler',
+        'tech_plotz.config.exception_handler.CustomExceptionHandler',
 
-    'DEFAULT_RENDERER_CLASSES': ['boilerplate.config.renderers.CustomJSONRenderer'],
+    'DEFAULT_RENDERER_CLASSES': ['tech_plotz.config.renderers.CustomJSONRenderer'],
 
 }
 
@@ -254,12 +255,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Environment Setup
 ENVIRONMENT = config('ENVIRONMENT', default='local')
 if ENVIRONMENT == 'dev':
-    from boilerplate.envs.dev import *
+    from tech_plotz.envs.dev import *
 elif ENVIRONMENT == 'uat':
-    from boilerplate.envs.uat import *
+    from tech_plotz.envs.uat import *
 elif ENVIRONMENT == 'docker':
-    from boilerplate.envs.docker import *
+    from tech_plotz.envs.docker import *
 elif ENVIRONMENT == 'local':
-    from boilerplate.envs.local import *
+    from tech_plotz.envs.local import *
 elif ENVIRONMENT == 'prod':
-    from boilerplate.envs.production import *
+    from tech_plotz.envs.production import *

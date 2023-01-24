@@ -6,7 +6,7 @@ services:
     container_name: django
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/srv/boilerplate/app/
+      - .:/srv/tech_plotz/app/
     ports:
       - "8000:8000"
     depends_on:
@@ -18,18 +18,18 @@ services:
 
   celery:
     build: .
-    command: celery -A boilerplate worker -l info -Q boilerplate
+    command: celery -A tech_plotz worker -l info -Q tech_plotz
     volumes:
-      - .:/srv/boilerplate/app/
+      - .:/srv/tech_plotz/app/
     depends_on:
       - django
       - redis
 
   celery-beat:
     build: .
-    command: celery -A boilerplate beat -l info
+    command: celery -A tech_plotz beat -l info
     volumes:
-      - .:/srv/boilerplate/app/
+      - .:/srv/tech_plotz/app/
     depends_on:
       - django
       - redis

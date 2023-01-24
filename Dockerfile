@@ -2,6 +2,6 @@ FROM python:3
 
 ENV PYTHONUNBUFFERD=1
 
-WORKDIR /srv/boilerplate/app
+WORKDIR /srv/tech_plotz/app
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
