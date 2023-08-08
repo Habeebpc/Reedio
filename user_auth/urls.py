@@ -4,22 +4,17 @@ from user_auth.views import (
     PasswordResetView,
     LogoutView,
     TokenRefreshView,
-    UsersListCreateView,
-    UserRetrieveUpdateDestroyView,
+    GoogleLoginView
 )
 from rest_framework_simplejwt.views import TokenVerifyView
 
 
 urlpatterns = [
     path('login/', LoginView.as_view(), name='login-view'),
-    path('refresh/', TokenRefreshView.as_view(),
-         name='token_refresh'),
-    path('password/reset/', PasswordResetView.as_view(),
-         name='reset-password'),
+    path('refresh/', TokenRefreshView.as_view()),
+    path('password/reset/', PasswordResetView.as_view()),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('google-login/', GoogleLoginView.as_view()),
 
-    path('users/', UsersListCreateView.as_view(), name='users-list-create'),
-    path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(),
-         name='user-retrieve-update-destroy'),
 ]

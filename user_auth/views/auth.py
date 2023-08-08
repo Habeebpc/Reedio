@@ -5,7 +5,7 @@ from rest_framework.generics import (
 )
 from rest_framework.views import APIView
 from user_auth.permission import IsAuthenticatedUser
-from tech_plotz.response import (
+from podcast_app.response import (
     SuccessResponse,
     ErrorResponse
 )
@@ -14,7 +14,8 @@ from user_auth.serializers import (
     UserPasswordResetSerializer,
     CustomTokenRefreshSerializer,
     UserCreateSerializer,
-    UserUpdateSerializer
+    UserUpdateSerializer,
+    GoogleLoginSerializer
 )
 from django.core.cache import cache
 from django.conf import settings
@@ -103,3 +104,17 @@ class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return SuccessResponse(message="User deleted successfully")
+
+
+class GoogleLoginView(CreateAPIView):
+    serializer_class = GoogleLoginSerializer
+
+    def post(self, request):
+        serializer = GoogleLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            return SuccessResponse(data=serializer.validated_data,
+                                   message="Login successful")
+        error = 'Error'
+        if serializer.errors.get('non_field_errors'):
+            error = serializer.errors["non_field_errors"][0]
+        return ErrorResponse(message=error)

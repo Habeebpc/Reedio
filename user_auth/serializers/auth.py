@@ -8,9 +8,18 @@ from user_auth.models import User
 from django.core.cache import cache
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 import jwt
+from decouple import config
+import string
+import random
 
 
 error_logger = logging.getLogger('error_logger')
+
+
+def generate_number(length):
+    digits = string.digits
+    numbers = ''.join(random.choice(digits) for i in range(length))
+    return numbers
 
 
 class UserJWTSerializer(TokenObtainPairSerializer):
@@ -19,6 +28,7 @@ class UserJWTSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token['name'] = user.name
+        token['premium_user'] = user.premium_user
         return token
 
     def validate(self, attrs):
@@ -32,22 +42,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name',  'username', 'password', 'profile_photo')
-        read_only_fields = ('id', 'username',)
-        extra_kwargs = {'password': {'write_only': True, 'required': True},
-                        'name': {'required': True}, }
-
-    def create(self, validated_data):
-        validated_data['email'] = validated_data['email'].lower()
-        validated_data['username'] = validated_data['mobile']
-        return User.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        if validated_data.get('password'):
-            password = validated_data.pop('password')
-            instance.set_password(password)
-        instance = super(UserSerializer, self).update(instance, validated_data)
-        return instance
+        fields = ('id', 'name', 'email', 'user_type',
+                  'username', 'premium_user')
 
 
 class AuthSerializer(serializers.Serializer):
@@ -138,3 +134,44 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         instance = super(UserUpdateSerializer, self).update(instance,
                                                             validated_data)
         return instance
+
+
+class GoogleLoginSerializer(serializers.Serializer):
+    name = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        name = attrs.get('name')
+        user = User.objects.filter(email=email).first()
+
+        if user:
+            if user.user_type != 3:
+                raise serializers.ValidationError('you have no permission')
+            credentials = {
+                'username': user.username,
+                'password': config('SOCIAL_AUTH_PASSWORD')
+            }
+            user = authenticate(**credentials)
+
+        else:
+            username = email.split('@')[0]+generate_number(5)
+            password = config('SOCIAL_AUTH_PASSWORD')
+            User.objects.create_user(
+                email=email,
+                name=name,
+                username=username,
+                password=password,
+                user_type=3
+            )
+            user = authenticate(username=username, password=password)
+        token = UserJWTSerializer.get_token(user)
+        acc = token.access_token
+        cache.set(acc['jti'], user.id, timeout=1728000)
+        auth = {
+            'refresh': str(token),
+            'access': str(acc),
+        }
+        user_serializer = UserSerializer(user)
+        data = {'token': auth, 'user': user_serializer.data}
+        return data

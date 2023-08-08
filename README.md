@@ -1,4 +1,4 @@
-# tech_plotz-backend
+# podcast_app-backend
 ## _ERP Application Backend_
 
 This is an application build using Python Django and Django REST framework. lo
@@ -6,8 +6,8 @@ This is an application build using Python Django and Django REST framework. lo
 ## Cloning the Repository and moving to the project level
 
 ```sh
-git clone git@github.com:RentPe-Technologies/tech_plotz-backend.git
-cd tech_plotz-backend
+git clone git@github.com:RentPe-Technologies/podcast_app-backend.git
+cd podcast_app-backend
 ```
 
 ## Installation and Setup
@@ -45,11 +45,11 @@ python manage.py runserver
 ```
 To start the Celery worker service
 ```sh
-celery -A tech_plotz worker -l info -Q tech_plotz
+celery -A podcast_app worker -l info -Q podcast_app
 ```
 To start the Celery beat service
 ```sh
-celery -A tech_plotz beat -l info
+celery -A podcast_app beat -l info
 ```
 
 Once the serices are up, you can open the browser and navigate the below links
