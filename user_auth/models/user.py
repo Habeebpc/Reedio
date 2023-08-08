@@ -8,6 +8,7 @@ USER_TYPE = (
     (3, 'Customer')
 )
 
+
 class Manager(UserManager):
 
     def create_superuser(self, username, email, password, **extra_fields):
@@ -19,7 +20,9 @@ class Manager(UserManager):
 
 class User(AbstractUser):
     name = models.CharField(max_length=200)
-    user_type = models.PositiveBigIntegerField(choices=USER_TYPE) 
+    mobile = models.CharField(
+        max_length=12, unique=True, null=True, blank=True)
+    user_type = models.PositiveBigIntegerField(choices=USER_TYPE)
     premium_user = models.BooleanField(default=False)
 
     def __str__(self):

@@ -1,8 +1,4 @@
-from rest_framework.generics import (
-    CreateAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
-)
+from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 from user_auth.permission import IsAuthenticatedUser
 from podcast_app.response import (
@@ -13,9 +9,8 @@ from user_auth.serializers import (
     AuthSerializer,
     UserPasswordResetSerializer,
     CustomTokenRefreshSerializer,
-    UserCreateSerializer,
-    UserUpdateSerializer,
-    GoogleLoginSerializer
+    GoogleLoginSerializer,
+    UserRegistrationSerializer
 )
 from django.core.cache import cache
 from django.conf import settings
@@ -89,23 +84,6 @@ class TokenRefreshView(CreateAPIView):
         return ErrorResponse(message="Error")
 
 
-class UsersListCreateView(ListCreateAPIView):
-    # permission_classes = (IsAuthenticatedUser, )
-    queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
-
-
-class UserRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticatedUser, )
-    queryset = User.objects.all()
-    serializer_class = UserUpdateSerializer
-
-    def delete(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return SuccessResponse(message="User deleted successfully")
-
-
 class GoogleLoginView(CreateAPIView):
     serializer_class = GoogleLoginSerializer
 
@@ -114,6 +92,20 @@ class GoogleLoginView(CreateAPIView):
         if serializer.is_valid():
             return SuccessResponse(data=serializer.validated_data,
                                    message="Login successful")
+        error = 'Error'
+        if serializer.errors.get('non_field_errors'):
+            error = serializer.errors["non_field_errors"][0]
+        return ErrorResponse(message=error)
+
+
+class UserRegistrationView(CreateAPIView):
+    serializer_class = UserRegistrationSerializer
+
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            return SuccessResponse(data=serializer.validated_data,
+                                   message="registration successful")
         error = 'Error'
         if serializer.errors.get('non_field_errors'):
             error = serializer.errors["non_field_errors"][0]

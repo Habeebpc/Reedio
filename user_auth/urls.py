@@ -4,7 +4,8 @@ from user_auth.views import (
     PasswordResetView,
     LogoutView,
     TokenRefreshView,
-    GoogleLoginView
+    GoogleLoginView,
+    UserRegistrationView
 )
 from rest_framework_simplejwt.views import TokenVerifyView
 
@@ -16,5 +17,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('google-login/', GoogleLoginView.as_view()),
+    path('user-registration/', UserRegistrationView.as_view())
 
 ]

@@ -11,7 +11,7 @@ import jwt
 from decouple import config
 import string
 import random
-
+from django.shortcuts import get_object_or_404
 
 error_logger = logging.getLogger('error_logger')
 
@@ -42,8 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'email', 'user_type',
-                  'username', 'premium_user')
+        fields = ('id', 'name', 'email', 'user_type', 'premium_user')
 
 
 class AuthSerializer(serializers.Serializer):
@@ -106,65 +105,73 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
         return data
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'name', 'mobile',
-                  'designation', 'profile_photo', 'password')
-
-    def create(self, validated_data):
-        instance = User.objects.create_user(**validated_data)
-        return instance
-
-
-class UserUpdateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'name', 'mobile',
-                  'designation', 'profile_photo', 'password')
-
-    def update(self, instance, validated_data):
-        if validated_data.get('password'):
-            password = validated_data.pop('password')
-            instance.set_password(password)
-        instance = super(UserUpdateSerializer, self).update(instance,
-                                                            validated_data)
-        return instance
-
-
 class GoogleLoginSerializer(serializers.Serializer):
-    name = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
+    token = serializers.CharField(required=True)
 
     def validate(self, attrs):
         email = attrs.get('email')
+        token = attrs.get('token')
+
+        user = get_object_or_404(User, email=email)
+
+        if token != config('SECURITY_TOKEN'):
+            raise serializers.ValidationError('oops, something went wrong')
+
+        if user.user_type != 3:
+            raise serializers.ValidationError('you have no permission')
+
+        credentials = {
+            'username': user.username,
+            'password': config('SOCIAL_AUTH_PASSWORD')
+        }
+        user = authenticate(**credentials)
+
+        token = UserJWTSerializer.get_token(user)
+        acc = token.access_token
+        cache.set(acc['jti'], user.id, timeout=1728000)
+        auth = {
+            'refresh': str(token),
+            'access': str(acc),
+        }
+        user_serializer = UserSerializer(user)
+        data = {'token': auth, 'user': user_serializer.data}
+        return data
+
+
+class UserRegistrationSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    mobile = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    token = serializers.CharField(required=True)
+
+    def validate(self, attrs):
         name = attrs.get('name')
-        user = User.objects.filter(email=email).first()
+        mobile = attrs.get('mobile')
+        email = attrs.get('email')
+        token = attrs.get('token')
 
-        if user:
-            if user.user_type != 3:
-                raise serializers.ValidationError('you have no permission')
-            credentials = {
-                'username': user.username,
-                'password': config('SOCIAL_AUTH_PASSWORD')
-            }
-            user = authenticate(**credentials)
+        if token != config('SECURITY_TOKEN'):
+            raise serializers.ValidationError('oops, something went wrong')
 
-        else:
-            username = email.split('@')[0]+generate_number(5)
-            password = config('SOCIAL_AUTH_PASSWORD')
-            User.objects.create_user(
-                email=email,
-                name=name,
-                username=username,
-                password=password,
-                user_type=3
-            )
-            user = authenticate(username=username, password=password)
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                'user with this email already exists')
+        if User.objects.filter(mobile=mobile).exists():
+            raise serializers.ValidationError(
+                'user with this mobile number already exists')
+
+        username = email.split('@')[0]+generate_number(5)
+        password = config('SOCIAL_AUTH_PASSWORD')
+        User.objects.create_user(
+            email=email,
+            name=name,
+            mobile=mobile,
+            username=username,
+            password=password,
+            user_type=3
+        )
+        user = authenticate(username=username, password=password)
         token = UserJWTSerializer.get_token(user)
         acc = token.access_token
         cache.set(acc['jti'], user.id, timeout=1728000)
