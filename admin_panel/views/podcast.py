@@ -33,6 +33,8 @@ class SubCategoryListCreateView(ListCreateAPIView):
     permission_classes = [IsAdminOrSubAdminUser]
     serializer_class = SubCategorySerializer
     queryset = SubCategory.objects.all().order_by('-id')
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category', ]
 
 
 class SubCategoryUpdateView(RetrieveUpdateDestroyAPIView):
