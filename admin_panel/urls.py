@@ -16,7 +16,8 @@ from admin_panel.views import (
     DummyImageListCreateView,
     DummyImageUpdateView,
     QuarriesListView,
-    QuarriesDetailView
+    QuarriesDetailView,
+    AddPlayListToPodcastView
 )
 
 urlpatterns = [
@@ -31,6 +32,7 @@ urlpatterns = [
     path('sub-category/<int:pk>/', SubCategoryUpdateView.as_view()),
     path('podcasts/', PodcastListCreateView.as_view()),
     path('podcast/<int:pk>/', PodcastUpdateView.as_view()),
+    path('podcast/<int:pk>/playlists/', AddPlayListToPodcastView.as_view()),
     path('podcast/<int:pk>/approve/', PodcastAdminApprovalView.as_view()),
     path('playlist/<int:pk>/', PlayListUpdateView.as_view()),
 

@@ -8,7 +8,8 @@ from admin_panel.serializers import (
     SubCategorySerializer,
     PlayListSerializer,
     PodcastSerializer,
-    PodcastAdminApprovalSerializer
+    PodcastAdminApprovalSerializer,
+    AddPlayListToPodcastSerializer
 )
 
 from admin_panel.models import Category, SubCategory, Podcast, PlayList
@@ -71,3 +72,14 @@ class PodcastAdminApprovalView(UpdateAPIView):
     serializer_class = PodcastAdminApprovalSerializer
     queryset = Podcast.objects.all()
     allowed_methods = ['PUT', ]
+
+
+class AddPlayListToPodcastView(ListCreateAPIView):
+    permission_classes = [IsAdminOrSubAdminUser]
+    serializer_class = AddPlayListToPodcastSerializer
+
+    def get_queryset(self):
+        return PlayList.objects.filter(podcast__id=self.kwargs.get('pk'))
+
+    def get_serializer_context(self):
+        return {'podcast_id': self.kwargs.get('pk')}
