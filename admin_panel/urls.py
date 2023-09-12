@@ -17,7 +17,8 @@ from admin_panel.views import (
     DummyImageUpdateView,
     QuarriesListView,
     QuarriesDetailView,
-    AddPlayListToPodcastView
+    AddPlayListToPodcastView,
+    SettingsUpdateView
 )
 
 urlpatterns = [
@@ -47,5 +48,8 @@ urlpatterns = [
 
     # Quarries
     path('quarries/', QuarriesListView.as_view()),
-    path('quarries/<int:pk>/', QuarriesDetailView.as_view())
+    path('quarries/<int:pk>/', QuarriesDetailView.as_view()),
+
+    # Settings
+    path('settings/', SettingsUpdateView.as_view())
 ]

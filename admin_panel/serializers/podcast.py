@@ -7,16 +7,17 @@ from admin_panel.models import (
 )
 from django.shortcuts import get_object_or_404
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'icon')
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
-        fields = ('id', 'category', 'name', 'description')
+        fields = ('id', 'category', 'name', 'description', 'icon')
 
 
 class PlayListSerializer(serializers.ModelSerializer):

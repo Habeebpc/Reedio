@@ -5,7 +5,8 @@ from admin_panel.models import (
     Podcast,
     PlayList,
     Banner,
-    DummyImage
+    DummyImage,
+    Settings
 )
 
 # Register your models here.
@@ -16,3 +17,4 @@ admin.site.register(Podcast)
 admin.site.register(PlayList)
 admin.site.register(Banner)
 admin.site.register(DummyImage)
+admin.site.register(Settings)

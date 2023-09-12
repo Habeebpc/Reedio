@@ -1,13 +1,15 @@
 from rest_framework.generics import (
     ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateDestroyAPIView,
+    RetrieveUpdateAPIView
 )
 from admin_panel.serializers import (
     BannerSerializer,
-    DummyImageSerializer
+    DummyImageSerializer,
+    SettingsSerializer
 )
 
-from admin_panel.models import Banner, DummyImage
+from admin_panel.models import Banner, DummyImage, Settings
 from user_auth.permission import IsAdminOrSubAdminUser
 
 
@@ -35,3 +37,12 @@ class DummyImageUpdateView(RetrieveUpdateDestroyAPIView):
     serializer_class = DummyImageSerializer
     queryset = DummyImage.objects.all()
     allowed_methods = ['GET', 'PATCH', 'DELETE']
+
+
+class SettingsUpdateView(RetrieveUpdateAPIView):
+    permission_classes = [IsAdminOrSubAdminUser]
+    serializer_class = SettingsSerializer
+    allowed_methods = ['GET', 'PUT']
+
+    def get_object(self):
+        return Settings.objects.last()

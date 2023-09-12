@@ -11,7 +11,8 @@ from customer.views import (
     ProfileView,
     UpgradeToPremium,
     HelpDeskView,
-    HelpDeskEditView
+    HelpDeskEditView,
+    SettingsApiView
 )
 
 urlpatterns = [
@@ -26,5 +27,6 @@ urlpatterns = [
     path('profile/', ProfileView.as_view()),
     path('upgrade-to-premium', UpgradeToPremium.as_view()),
     path('quarries/', HelpDeskView.as_view()),
-    path('quarries/<int:pk>/', HelpDeskEditView.as_view())
+    path('quarries/<int:pk>/', HelpDeskEditView.as_view()),
+    path('settings/', SettingsApiView.as_view())
 ]

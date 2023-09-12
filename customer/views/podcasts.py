@@ -29,6 +29,8 @@ class SubCategoryListView(ListAPIView):
     permission_classes = [IsCustomerUser]
     serializer_class = SubCategoryListSerializer
     queryset = SubCategory.objects.all().order_by('-id')
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category']
 
 
 class PodCastListView(ListAPIView):

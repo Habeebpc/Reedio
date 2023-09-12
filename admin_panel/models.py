@@ -1,5 +1,10 @@
 from django.db import models
 
+APP_STATUS = (
+    ('active', 'Active'),
+    ('under_maintenance', 'Under Maintenance')
+)
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -69,3 +74,8 @@ class DummyImage(models.Model):
 
     def __str__(self):
         return self.image
+
+
+class Settings(models.Model):
+    app_status = models.CharField(
+        max_length=30, choices=APP_STATUS, default='active')
