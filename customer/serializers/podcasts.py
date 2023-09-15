@@ -31,11 +31,12 @@ class PlayListInPodcast(serializers.ModelSerializer):
 class PodcastDetailSerializer(serializers.ModelSerializer):
     play_list = serializers.SerializerMethodField()
     favorite = serializers.SerializerMethodField()
+    favorite_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Podcast
         fields = ('id', 'image', 'name', 'description',
-                  'updated_on', 'play_list', 'favorite')
+                  'updated_on', 'play_list', 'favorite', 'favorite_id')
 
     def get_play_list(self, obj):
         return PlayListInPodcast(obj.play_lists.all(), many=True).data
@@ -45,6 +46,12 @@ class PodcastDetailSerializer(serializers.ModelSerializer):
                 podcast=obj, user=self.context['user']).exists():
             return True
         return False
+
+    def get_favorite_id(self, obj):
+        fav = Favorite.objects.filter(podcast=obj, user=self.context['user'])
+        if fav.exists():
+            return fav.last().id
+        return None
 
 
 class AddToFavoriteSerializer(serializers.ModelSerializer):
