@@ -30,14 +30,21 @@ class PlayListInPodcast(serializers.ModelSerializer):
 
 class PodcastDetailSerializer(serializers.ModelSerializer):
     play_list = serializers.SerializerMethodField()
+    favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Podcast
         fields = ('id', 'image', 'name', 'description',
-                  'updated_on', 'play_list')
+                  'updated_on', 'play_list', 'favorite')
 
     def get_play_list(self, obj):
         return PlayListInPodcast(obj.play_lists.all(), many=True).data
+
+    def get_favorite(self, obj):
+        if Favorite.objects.filter(
+                podcast=obj, user=self.context['user']).exists():
+            return True
+        return False
 
 
 class AddToFavoriteSerializer(serializers.ModelSerializer):

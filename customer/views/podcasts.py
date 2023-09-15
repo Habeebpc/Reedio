@@ -47,6 +47,9 @@ class PodCastDetailView(RetrieveAPIView):
     serializer_class = PodcastDetailSerializer
     queryset = Podcast.objects.filter(is_approved=True).order_by('-id')
 
+    def get_serializer_context(self):
+        return {'user': self.request.user}
+
 
 class FavoriteListCreateView(ListCreateAPIView):
     permission_classes = [IsCustomerUser]
