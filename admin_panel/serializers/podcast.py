@@ -28,13 +28,20 @@ class PlayListSerializer(serializers.ModelSerializer):
 
 class PodcastSerializer(serializers.ModelSerializer):
     play_list = PlayListSerializer(write_only=True, many=True)
+    created_user = serializers.SerializerMethodField()
 
     class Meta:
         model = Podcast
         fields = ('id', 'category', 'sub_category', 'name',
-                  'description', 'image', 'play_list')
+                  'description', 'image', 'created_user', 'play_list')
+
+    def get_created_user(self, obj):
+        if obj.created_by:
+            return {'id': obj.created_by.id, 'name': obj.created_by.name}
+        return {'id': None, 'name': None}
 
     def create(self, validated_data):
+        validated_data['created_by'] = self.context['user']
         play_list = validated_data.pop('play_list', [])
         instance = super().create(validated_data)
         for item in play_list:

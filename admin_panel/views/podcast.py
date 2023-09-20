@@ -48,9 +48,17 @@ class SubCategoryUpdateView(RetrieveUpdateDestroyAPIView):
 class PodcastListCreateView(ListCreateAPIView):
     permission_classes = [IsAdminOrSubAdminUser]
     serializer_class = PodcastSerializer
-    queryset = Podcast.objects.all().order_by('-id')
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['is_approved', 'category', 'sub_category']
+
+    def get_queryset(self):
+        if self.request.user.user_type == 2:
+            return Podcast.objects.filter(
+                created_by=self.request.user).order_by('-id')
+        return Podcast.objects.all()
+
+    def get_serializer_context(self):
+        return {'user': self.request.user}
 
 
 class PodcastUpdateView(RetrieveUpdateDestroyAPIView):

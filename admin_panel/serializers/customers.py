@@ -7,7 +7,7 @@ from datetime import datetime
 class CustomersListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'name', 'email', 'premium_user')
+        fields = ('id', 'name', 'mobile', 'email', 'premium_user')
 
 
 class QuarriesSerializer(serializers.ModelSerializer):

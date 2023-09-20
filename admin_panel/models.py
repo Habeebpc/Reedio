@@ -33,6 +33,10 @@ class Podcast(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     image = models.URLField(null=True, blank=True)
+    created_by = models.ForeignKey(
+        'user_auth.User',
+        on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='podcasts')
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     is_approved = models.BooleanField(default=False)
