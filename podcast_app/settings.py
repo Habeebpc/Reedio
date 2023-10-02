@@ -7,7 +7,8 @@ import datetime
 from corsheaders.defaults import default_headers
 from decouple import config
 
-# from kombu import Queue
+from kombu import Queue
+from constants import DEFAULT_CELERY_QUEUE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,7 +86,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 
 # Password validation
@@ -184,7 +184,7 @@ LOGGING = {
             'backupCount': 100,
             'formatter': 'verbose',
         },
-        
+
     },
     'loggers': {
         'error_logger': {
@@ -197,7 +197,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        
+
     }
 }
 
@@ -208,17 +208,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Celery
-# BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_DEFAULT_QUEUE = DEFAULT_CELERY_QUEUE
-# CELERY_TRACK_STARTED = True
-# CELERY_QUEUES = (
-#     Queue(DEFAULT_CELERY_QUEUE, routing_key='task.#'),
-# )
-# CELERY_TIMEZONE = "Asia/Kolkata"
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_DEFAULT_QUEUE = DEFAULT_CELERY_QUEUE
+CELERY_TRACK_STARTED = True
+CELERY_QUEUES = (
+    Queue(DEFAULT_CELERY_QUEUE, routing_key='task.#'),
+)
 
 CACHES = {
     "default": {

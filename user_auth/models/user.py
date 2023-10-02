@@ -24,6 +24,8 @@ class User(AbstractUser):
         max_length=12, unique=True, null=True, blank=True)
     user_type = models.PositiveBigIntegerField(choices=USER_TYPE)
     premium_user = models.BooleanField(default=False)
+    premium_start_date = models.DateField(null=True, blank=True)
+    premium_expiry_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.name

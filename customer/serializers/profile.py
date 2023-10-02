@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user_auth.models import User
 from customer.models import HelpDesk
+from datetime import date, timedelta
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -16,6 +17,9 @@ class UpgradeToPremiumSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.premium_user = True
+        today = date.today()
+        instance.premium_start_date = today
+        instance.premium_expiry_date = today + timedelta(days=365)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):

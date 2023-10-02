@@ -13,7 +13,9 @@ class UserAdmin(UserAdmin):
                     'name',
                     'email',
                     'mobile',
-                    'premium_user'
+                    'premium_user',
+                    'premium_start_date',
+                    'premium_expiry_date'
                 )
             }
         ),
