@@ -37,8 +37,18 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'user_auth',
     'admin_panel',
-    'customer'
+    'customer',
+    'dbbackup'
 ]
+
+DBBACKUP_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DBBACKUP_STORAGE_OPTIONS = {
+    "access_key": config('S3_ACCESS_KEY'),
+    "secret_key": config('S3_SECRET_KEY'),
+    "bucket_name": config('S3_BUCKET_NAME'),
+    "location": config('S3_LOCATION'),
+    "default_acl": "private",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

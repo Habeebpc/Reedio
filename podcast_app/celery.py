@@ -17,5 +17,10 @@ app.conf.beat_schedule = {
     "premium_end_task": {
         "task": "admin_panel.tasks.premium.premium_end_task",
         "schedule": crontab(minute='*/1'),
+    },
+    "database_backup": {
+        "task": "admin_panel.tasks.database_backup",
+        "schedule": crontab(hour=6, minute=0),
     }
+
 }
