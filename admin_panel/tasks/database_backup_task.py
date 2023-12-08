@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.management import call_command
 
 
-@shared_task(name="database_backup")
+@shared_task()
 def database_backup():
     try:
         call_command("dbbackup")
