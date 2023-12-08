@@ -19,7 +19,7 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute='*/1'),
     },
     "database_backup": {
-        "task": "admin_panel.tasks.database_backup",
+        "task": "admin_panel.tasks.database_backup_task.database_backup",
         "schedule": crontab(hour=6, minute=0),
     }
 
