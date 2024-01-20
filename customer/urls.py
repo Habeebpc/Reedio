@@ -12,7 +12,10 @@ from customer.views import (
     UpgradeToPremium,
     HelpDeskView,
     HelpDeskEditView,
-    SettingsApiView
+    SettingsApiView,
+    FavoriteAudioListCreateView,
+    FavoriteAudioRemoveView,
+    AudioProgressApiView
 )
 
 urlpatterns = [
@@ -28,5 +31,8 @@ urlpatterns = [
     path('upgrade-to-premium', UpgradeToPremium.as_view()),
     path('quarries/', HelpDeskView.as_view()),
     path('quarries/<int:pk>/', HelpDeskEditView.as_view()),
-    path('settings/', SettingsApiView.as_view())
+    path('settings/', SettingsApiView.as_view()),
+    path('favorite-audios/', FavoriteAudioListCreateView.as_view()),
+    path('favorite-audio/<int:pk>/remove', FavoriteAudioRemoveView.as_view()),
+    path('audio/<int:pk>/progress/', AudioProgressApiView.as_view())
 ]

@@ -18,7 +18,9 @@ from admin_panel.views import (
     QuarriesListView,
     QuarriesDetailView,
     AddPlayListToPodcastView,
-    SettingsUpdateView
+    SettingsUpdateView,
+    DeletedPlayListView,
+    RestorePlayListView
 )
 
 urlpatterns = [
@@ -36,6 +38,8 @@ urlpatterns = [
     path('podcast/<int:pk>/playlists/', AddPlayListToPodcastView.as_view()),
     path('podcast/<int:pk>/approve/', PodcastAdminApprovalView.as_view()),
     path('playlist/<int:pk>/', PlayListUpdateView.as_view()),
+    path('deleted-playlists/', DeletedPlayListView.as_view()),
+    path('restore-playlist/<int:pk>/', RestorePlayListView.as_view()),
 
     # customer
     path('customers/', CustomersListView.as_view()),

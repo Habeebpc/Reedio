@@ -2,18 +2,21 @@ from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
     RetrieveAPIView,
-    DestroyAPIView
+    DestroyAPIView,
+    UpdateAPIView
 )
 from customer.serializers import (
     CategoryListSerializer,
     SubCategoryListSerializer,
     PodcastListSerializer,
     PodcastDetailSerializer,
-    AddToFavoriteSerializer
+    AddToFavoriteSerializer,
+    AddToFavoriteAudioSerializer,
+    AudioProgressSerializer
 )
 
 from admin_panel.models import Category, SubCategory, Podcast
-from customer.models import Favorite
+from customer.models import Favorite, FavoriteAudio, AudioProgress
 from user_auth.permission import IsCustomerUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
@@ -68,3 +71,36 @@ class FavoriteRemoveView(DestroyAPIView):
 
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user).order_by('-id')
+
+
+class FavoriteAudioListCreateView(ListCreateAPIView):
+    permission_classes = [IsCustomerUser]
+    serializer_class = AddToFavoriteAudioSerializer
+
+    def get_queryset(self):
+        return FavoriteAudio.objects.filter(
+            user=self.request.user).order_by('-id')
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
+
+class FavoriteAudioRemoveView(DestroyAPIView):
+    permission_classes = [IsCustomerUser]
+    serializer_class = AddToFavoriteAudioSerializer
+
+    def get_queryset(self):
+        return FavoriteAudio.objects.filter(
+            user=self.request.user).order_by('-id')
+
+
+class AudioProgressApiView(UpdateAPIView):
+    permission_classes = [IsCustomerUser]
+    serializer_class = AudioProgressSerializer
+    allowed_methods = ['PUT']
+
+    def get_object(self):
+        return AudioProgress.objects.get_or_create(
+            user=self.request.user,
+            audio=self.kwargs.get('pk')
+        )[0]
