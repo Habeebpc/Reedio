@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from admin_panel.models import Category, SubCategory, Podcast, PlayList
-from customer.models import Favorite
+from customer.models import Favorite, FavoriteAudio, AudioProgress
+from django.shortcuts import get_object_or_404
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -22,10 +23,40 @@ class PodcastListSerializer(serializers.ModelSerializer):
 
 
 class PlayListInPodcast(serializers.ModelSerializer):
+    favorite = serializers.SerializerMethodField()
+    favorite_id = serializers.SerializerMethodField()
+    progress = serializers.SerializerMethodField()
 
     class Meta:
         model = PlayList
-        fields = ('id', 'name', 'description', 'audio_url', 'sub_required')
+        fields = (
+            'id',
+            'name',
+            'description',
+            'audio_url',
+            'sub_required',
+            'favorite',
+            'favorite_id',
+            'progress'
+        )
+
+    def get_favorite(self, obj):
+        if FavoriteAudio.objects.filter(
+                playlist=obj, user=self.context['user']).exists():
+            return True
+        return False
+
+    def get_favorite_id(self, obj):
+        fav = FavoriteAudio.objects.filter(
+            playlist=obj, user=self.context['user'])
+        if fav.exists():
+            return fav.last().id
+        return None
+
+    def get_progress(self, obj):
+        progress = AudioProgress.objects.get_or_create(
+            audio=obj, user=self.context['user'])
+        return progress[0].progress
 
 
 class PodcastDetailSerializer(serializers.ModelSerializer):
@@ -39,7 +70,12 @@ class PodcastDetailSerializer(serializers.ModelSerializer):
                   'updated_on', 'play_list', 'favorite', 'favorite_id')
 
     def get_play_list(self, obj):
-        return PlayListInPodcast(obj.play_lists.all(), many=True).data
+        return PlayListInPodcast(
+            obj.play_lists.filter(
+                is_trashed=False).order_by('position'),
+            many=True,
+            context=self.context
+        ).data
 
     def get_favorite(self, obj):
         if Favorite.objects.filter(
@@ -66,3 +102,23 @@ class AddToFavoriteSerializer(serializers.ModelSerializer):
             'image': instance.podcast.image,
             'name': instance.podcast.name,
         }
+
+
+class AddToFavoriteAudioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteAudio
+        fields = ('playlist',)
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'playlist_id': instance.playlist.id,
+            'name': instance.playlist.name,
+            'audio_url': instance.playlist.audio_url,
+        }
+
+
+class AudioProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AudioProgress
+        fields = ('progress',)

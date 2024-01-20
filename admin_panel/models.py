@@ -53,6 +53,8 @@ class PlayList(models.Model):
     audio_url = models.URLField()
     sub_required = models.BooleanField(default=False)
     added_on = models.DateTimeField(auto_now_add=True)
+    position = models.FloatField(default=0)
+    is_trashed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

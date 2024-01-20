@@ -23,7 +23,7 @@ class SubCategorySerializer(serializers.ModelSerializer):
 class PlayListSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayList
-        exclude = ('added_on', 'podcast')
+        exclude = ('added_on', 'podcast', 'is_trashed')
 
 
 class PodcastSerializer(serializers.ModelSerializer):
@@ -59,7 +59,8 @@ class PodcastSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
         rep['is_approved'] = instance.is_approved
         rep['play_list'] = PlayListSerializer(
-            instance.play_lists.all(), many=True).data
+            instance.play_lists.filter(
+                is_trashed=False).order_by('position'), many=True).data
         return rep
 
 
@@ -76,9 +77,27 @@ class PodcastAdminApprovalSerializer(serializers.ModelSerializer):
 class AddPlayListToPodcastSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayList
-        exclude = ('added_on', 'podcast')
+        exclude = ('added_on', 'podcast', 'is_trashed')
 
     def create(self, validated_data):
         podcast = get_object_or_404(Podcast, id=self.context['podcast_id'])
         validated_data['podcast'] = podcast
         return super().create(validated_data)
+
+
+class RestorePlayListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayList
+        fields = ()
+
+    def update(self, instance, validated_data):
+        instance.is_trashed = False
+        return super().update(instance, validated_data)
+
+
+class DeletedPlayListSerializer(serializers.ModelSerializer):
+    podcast = serializers.CharField(source='podcast.name')
+
+    class Meta:
+        model = PlayList
+        fields = ('podcast', 'name', 'description', 'audio_url')

@@ -10,6 +10,26 @@ class Favorite(models.Model):
     added_on = models.DateTimeField(auto_now_add=True)
 
 
+class FavoriteAudio(models.Model):
+    user = models.ForeignKey(
+        'user_auth.User',
+        on_delete=models.CASCADE, related_name='favorite_audios')
+    playlist = models.ForeignKey(
+        'admin_panel.PlayList',
+        on_delete=models.CASCADE, related_name='favorite_audios')
+    added_on = models.DateTimeField(auto_now_add=True)
+
+
+class AudioProgress(models.Model):
+    user = models.ForeignKey(
+        'user_auth.User',
+        on_delete=models.CASCADE, related_name='audio_progresses')
+    audio = models.ForeignKey(
+        'admin_panel.PlayList',
+        on_delete=models.CASCADE, related_name='audio_progresses')
+    progress = models.IntegerField(default=0)
+
+
 class HelpDesk(models.Model):
     user = models.ForeignKey(
         'user_auth.User', on_delete=models.CASCADE, related_name='help_desk')

@@ -1,7 +1,8 @@
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
-    UpdateAPIView
+    UpdateAPIView,
+    ListAPIView
 )
 from admin_panel.serializers import (
     CategorySerializer,
@@ -9,12 +10,15 @@ from admin_panel.serializers import (
     PlayListSerializer,
     PodcastSerializer,
     PodcastAdminApprovalSerializer,
-    AddPlayListToPodcastSerializer
+    AddPlayListToPodcastSerializer,
+    RestorePlayListSerializer,
+    DeletedPlayListSerializer
 )
 
 from admin_panel.models import Category, SubCategory, Podcast, PlayList
 from user_auth.permission import IsAdminOrSubAdminUser, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
+from podcast_app.response import SuccessResponse
 
 
 class CategoryListCreateView(ListCreateAPIView):
@@ -55,7 +59,7 @@ class PodcastListCreateView(ListCreateAPIView):
         if self.request.user.user_type == 2:
             return Podcast.objects.filter(
                 created_by=self.request.user).order_by('-id')
-        return Podcast.objects.all()
+        return Podcast.objects.all().order_by('-id')
 
     def get_serializer_context(self):
         return {'user': self.request.user}
@@ -74,6 +78,12 @@ class PlayListUpdateView(RetrieveUpdateDestroyAPIView):
     queryset = PlayList.objects.all()
     allowed_methods = ['GET', 'PATCH', 'DELETE']
 
+    def delete(self, request, *args, **kwargs):
+        playlist = self.get_object()
+        playlist.is_trashed = True
+        playlist.save()
+        return SuccessResponse(message='Playlist deleted successfully')
+
 
 class PodcastAdminApprovalView(UpdateAPIView):
     permission_classes = [IsAdminUser]
@@ -87,7 +97,33 @@ class AddPlayListToPodcastView(ListCreateAPIView):
     serializer_class = AddPlayListToPodcastSerializer
 
     def get_queryset(self):
-        return PlayList.objects.filter(podcast__id=self.kwargs.get('pk'))
+        return PlayList.objects.filter(
+            podcast__id=self.kwargs.get('pk'),
+            is_trashed=False
+        ).order_by('-id')
 
     def get_serializer_context(self):
         return {'podcast_id': self.kwargs.get('pk')}
+
+
+class DeletedPlayListView(ListAPIView):
+    permission_classes = [IsAdminOrSubAdminUser]
+    serializer_class = DeletedPlayListSerializer
+
+    def get_queryset(self):
+        if self.request.user.user_type == 2:
+            return PlayList.objects.filter(
+                podcast__created_by=self.request.user,
+                is_trashed=True
+            ).order_by('-id')
+        return PlayList.objects.filter(is_trashed=True).order_by('-id')
+
+    def get_serializer_context(self):
+        return {'user': self.request.user}
+
+
+class RestorePlayListView(UpdateAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = RestorePlayListSerializer
+    queryset = PlayList.objects.all()
+    allowed_methods = ['PUT', ]
