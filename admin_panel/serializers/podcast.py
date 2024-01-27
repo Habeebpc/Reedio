@@ -100,4 +100,4 @@ class DeletedPlayListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlayList
-        fields = ('podcast', 'name', 'description', 'audio_url')
+        fields = ('id', 'podcast', 'name', 'description', 'audio_url')
