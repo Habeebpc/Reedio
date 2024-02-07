@@ -102,5 +102,5 @@ class AudioProgressApiView(UpdateAPIView):
     def get_object(self):
         return AudioProgress.objects.get_or_create(
             user=self.request.user,
-            audio=self.kwargs.get('pk')
+            audio__id=self.kwargs.get('pk')
         )[0]
