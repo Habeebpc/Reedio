@@ -100,7 +100,7 @@ class AudioProgressApiView(UpdateAPIView):
     allowed_methods = ['PUT']
 
     def get_object(self):
-        return AudioProgress.objects.get_or_create(
+        return AudioProgress.objects.filter(
             user=self.request.user,
             audio__id=self.kwargs.get('pk')
-        )[0]
+        ).last()
