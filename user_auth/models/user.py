@@ -27,7 +27,4 @@ class User(AbstractUser):
     premium_start_date = models.DateField(null=True, blank=True)
     premium_expiry_date = models.DateField(null=True, blank=True)
 
-    def __str__(self):
-        return self.name
-
     objects = Manager()
