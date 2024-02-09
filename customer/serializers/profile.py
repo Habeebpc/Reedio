@@ -7,7 +7,7 @@ from datetime import date, timedelta
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'email', 'premium_user')
+        fields = ('name', 'email', 'mobile', 'premium_user')
 
 
 class UpgradeToPremiumSerializer(serializers.ModelSerializer):
