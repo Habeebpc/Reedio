@@ -56,10 +56,12 @@ class PlayListInPodcast(serializers.ModelSerializer):
     def get_progress(self, obj):
         progress = AudioProgress.objects.filter(
             audio=obj, user=self.context['user'])
-        if not progress:
+        if progress:
+            return progress.first().progress
+        else:
             progress = AudioProgress.objects.create(
                 audio=obj, user=self.context['user'])
-        return progress.first().progress
+            return progress.progress
 
 
 class PodcastDetailSerializer(serializers.ModelSerializer):
