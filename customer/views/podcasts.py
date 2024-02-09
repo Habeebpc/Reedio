@@ -103,4 +103,4 @@ class AudioProgressApiView(UpdateAPIView):
         return AudioProgress.objects.filter(
             user=self.request.user,
             audio__id=self.kwargs.get('pk')
-        ).last()
+        ).first()
