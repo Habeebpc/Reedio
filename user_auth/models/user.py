@@ -26,5 +26,6 @@ class User(AbstractUser):
     premium_user = models.BooleanField(default=False)
     premium_start_date = models.DateField(null=True, blank=True)
     premium_expiry_date = models.DateField(null=True, blank=True)
+    audio_permission = models.BooleanField(default=False)
 
     objects = Manager()

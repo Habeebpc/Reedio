@@ -5,7 +5,14 @@ from user_auth.models import User
 class SubAdminListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'name', 'email', 'username', 'password')
+        fields = (
+            'id',
+            'name',
+            'email',
+            'audio_permission',
+            'username',
+            'password'
+        )
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -20,11 +27,10 @@ class SubAdminListCreateSerializer(serializers.ModelSerializer):
         validated_data['user_type'] = 2
         user = User.objects.create_user(**validated_data)
         return user
-    
+
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         if validated_data.get('password'):
             instance.set_password(validated_data['password'])
             instance.save()
         return instance
-
