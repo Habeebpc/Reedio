@@ -161,7 +161,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'username',
     'USER_ID_CLAIM': 'user_id',
-
     'JTI_CLAIM': 'jti',
 }
 

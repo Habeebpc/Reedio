@@ -42,8 +42,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'mobile',
-                  'email', 'user_type', 'premium_user')
+        fields = ('id', 'name', 'mobile', 'email',
+                  'user_type', 'premium_user', 'audio_permission')
 
 
 class AuthSerializer(serializers.Serializer):
