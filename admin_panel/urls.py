@@ -20,7 +20,8 @@ from admin_panel.views import (
     AddPlayListToPodcastView,
     SettingsUpdateView,
     DeletedPlayListView,
-    RestorePlayListView
+    RestorePlayListView,
+    CustomerPremiumEditView
 )
 
 urlpatterns = [
@@ -43,6 +44,8 @@ urlpatterns = [
 
     # customer
     path('customers/', CustomersListView.as_view()),
+    path('customer/<int:pk>/premium/', CustomerPremiumEditView.as_view()),
+
 
     # banners
     path('main-banners/', BannerListCreateView.as_view()),

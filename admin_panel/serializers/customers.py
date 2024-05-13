@@ -10,6 +10,12 @@ class CustomersListSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'mobile', 'email', 'premium_user')
 
 
+class CustomerPremiumEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('premium_user',)
+
+
 class QuarriesSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
 
