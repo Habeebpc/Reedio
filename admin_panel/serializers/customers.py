@@ -7,13 +7,21 @@ from datetime import datetime
 class CustomersListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'name', 'mobile', 'email', 'premium_user')
+        fields = (
+            'id',
+            'name',
+            'mobile',
+            'email',
+            'gold_user',
+            'diamond_user',
+            'premium_expiry_date'
+        )
 
 
 class CustomerPremiumEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('premium_user',)
+        fields = ('gold_user', 'diamond_user', 'premium_expiry_date')
 
 
 class QuarriesSerializer(serializers.ModelSerializer):

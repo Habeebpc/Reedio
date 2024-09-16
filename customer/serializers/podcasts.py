@@ -2,6 +2,8 @@ from rest_framework import serializers
 from admin_panel.models import Category, SubCategory, Podcast, PlayList
 from customer.models import Favorite, FavoriteAudio, AudioProgress
 from django.shortcuts import get_object_or_404
+from retailer.models import AccessCode
+from datetime import datetime, date
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -17,9 +19,33 @@ class SubCategoryListSerializer(serializers.ModelSerializer):
 
 
 class PodcastListSerializer(serializers.ModelSerializer):
+    is_redeemed = serializers.SerializerMethodField()
+    is_purchased = serializers.SerializerMethodField()
+
     class Meta:
         model = Podcast
-        fields = ('id', 'image', 'name')
+        fields = (
+            'id',
+            'image',
+            'name',
+            'price',
+            'is_gold',
+            'is_diamond',
+            'is_redeemed',
+            'is_purchased'
+        )
+
+    def get_is_redeemed(self, obj):
+        if AccessCode.objects.filter(
+            podcast=obj,
+                redeemed_by=self.context['user'],
+                validity__gte=date.today()
+        ).exists():
+            return True
+        return False
+
+    def get_is_purchased(self, obj):
+        return False
 
 
 class PlayListInPodcast(serializers.ModelSerializer):
@@ -127,3 +153,24 @@ class AudioProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = AudioProgress
         fields = ('progress',)
+
+
+class RedeemAccessCodeSerializer(serializers.Serializer):
+    access_code = serializers.CharField()
+
+    def validate(self, attrs):
+        access_code = attrs['access_code']
+        coupon = AccessCode.objects.filter(code=access_code)
+        if not coupon.exists():
+            raise serializers.ValidationError("Invalid access code")
+        coupon = coupon.last()
+        if coupon.redeemed_by is not None:
+            raise serializers.ValidationError("Access code already redeemed")
+        if coupon.validity < date.today():
+            raise serializers.ValidationError("Access code expired")
+        coupon.redeemed_by = self.context['user']
+        coupon.redeemed_on = datetime.now()
+        coupon.save(update_fields=['redeemed_by', 'redeemed_on'])
+        podcast = coupon.podcast.name
+
+        return {'message': f'Congrats, {podcast} unlocked successfully!!'}

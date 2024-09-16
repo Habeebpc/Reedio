@@ -5,7 +5,9 @@ from django.contrib.auth.models import UserManager
 USER_TYPE = (
     (1, 'Super Admin'),
     (2, 'Sub Admin'),
-    (3, 'Customer')
+    (3, 'Customer'),
+    (4, 'Partner'),
+    (5, 'Retailer')
 )
 
 
@@ -23,9 +25,28 @@ class User(AbstractUser):
     mobile = models.CharField(
         max_length=12, unique=True, null=True, blank=True)
     user_type = models.PositiveBigIntegerField(choices=USER_TYPE)
-    premium_user = models.BooleanField(default=False)
+    gold_user = models.BooleanField(default=False)
+    diamond_user = models.BooleanField(default=False)
     premium_start_date = models.DateField(null=True, blank=True)
     premium_expiry_date = models.DateField(null=True, blank=True)
     audio_permission = models.BooleanField(default=False)
+    validity = models.DateField(null=True, blank=True)
 
     objects = Manager()
+
+
+class PartnerAndRetailer(models.Model):
+    partner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='partners'
+    )
+    retailer = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='retailers'
+    )
+    name = models.CharField(max_length=200)
+    mobile = models.CharField(max_length=12, null=True, blank=True)
+    email = models.EmailField()
+    is_active = models.BooleanField(default=False)

@@ -21,7 +21,11 @@ from admin_panel.views import (
     SettingsUpdateView,
     DeletedPlayListView,
     RestorePlayListView,
-    CustomerPremiumEditView
+    CustomerPremiumEditView,
+    PartnerListCreateView,
+    PartnerUpdateView,
+    PackageListCreateView,
+    PackageUpdateView
 )
 
 urlpatterns = [
@@ -29,11 +33,18 @@ urlpatterns = [
     path('sub-admins/', SubAdminListCreateView.as_view()),
     path('sub-admin/<int:pk>/', SubAdminUpdateView.as_view()),
 
+    # partner
+    path('partners/', PartnerListCreateView.as_view()),
+    path('partner/<int:pk>/', PartnerUpdateView.as_view()),
+
+
     # podcast
     path('categories/', CategoryListCreateView.as_view()),
     path('category/<int:pk>/', CategoryUpdateView.as_view()),
     path('sub-categories/', SubCategoryListCreateView.as_view()),
     path('sub-category/<int:pk>/', SubCategoryUpdateView.as_view()),
+    path('packages/', PackageListCreateView.as_view()),
+    path('package/<int:pk>/', PackageUpdateView.as_view()),
     path('podcasts/', PodcastListCreateView.as_view()),
     path('podcast/<int:pk>/', PodcastUpdateView.as_view()),
     path('podcast/<int:pk>/playlists/', AddPlayListToPodcastView.as_view()),

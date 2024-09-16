@@ -74,8 +74,40 @@ class IsPremiumCustomerUser(IsAuthenticated):
     def has_permission(self, request, view):
         if not request.user.is_anonymous and \
             request.user.user_type == 3 and \
-            request.user.premium_user and \
+            request.user.gold_user or request.user.diamond_user and \
                 super(IsPremiumCustomerUser, self).has_permission(request, view):
+
+            jwt_secret = settings.SIMPLE_JWT.get('SIGNING_KEY')
+            token = request.META.get("HTTP_AUTHORIZATION").split()[1]
+            jti = jwt.decode(token, jwt_secret,
+                             algorithms=["HS256"])['jti']
+            if cache.get(jti):
+                return True
+            return False
+        return False
+
+
+class IsPartnerUser(IsAuthenticated):
+    def has_permission(self, request, view):
+        if not request.user.is_anonymous and \
+            request.user.user_type == 4 and \
+                super(IsPartnerUser, self).has_permission(request, view):
+
+            jwt_secret = settings.SIMPLE_JWT.get('SIGNING_KEY')
+            token = request.META.get("HTTP_AUTHORIZATION").split()[1]
+            jti = jwt.decode(token, jwt_secret,
+                             algorithms=["HS256"])['jti']
+            if cache.get(jti):
+                return True
+            return False
+        return False
+
+
+class IsRetailerUser(IsAuthenticated):
+    def has_permission(self, request, view):
+        if not request.user.is_anonymous and \
+            request.user.user_type == 5 and \
+                super(IsRetailerUser, self).has_permission(request, view):
 
             jwt_secret = settings.SIMPLE_JWT.get('SIGNING_KEY')
             token = request.META.get("HTTP_AUTHORIZATION").split()[1]

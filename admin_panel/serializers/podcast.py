@@ -4,6 +4,7 @@ from admin_panel.models import (
     SubCategory,
     Podcast,
     PlayList,
+    Package
 )
 from django.shortcuts import get_object_or_404
 
@@ -20,6 +21,12 @@ class SubCategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'category', 'name', 'description', 'icon')
 
 
+class PackageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
+        fields = ('id', 'name', 'description', 'amount', 'validity')
+
+
 class PlayListSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayList
@@ -32,8 +39,19 @@ class PodcastSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Podcast
-        fields = ('id', 'category', 'sub_category', 'name',
-                  'description', 'image', 'created_user', 'play_list')
+        fields = (
+            'id',
+            'category',
+            'sub_category',
+            'name',
+            'description',
+            'price',
+            'is_gold',
+            'is_diamond',
+            'image',
+            'created_user',
+            'play_list'
+        )
 
     def get_created_user(self, obj):
         if obj.created_by:

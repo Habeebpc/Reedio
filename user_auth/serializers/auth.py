@@ -28,7 +28,8 @@ class UserJWTSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token['name'] = user.name
-        token['premium_user'] = user.premium_user
+        token['gold_user'] = user.gold_user
+        token['diamond_user'] = user.diamond_user
         return token
 
     def validate(self, attrs):
@@ -42,8 +43,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'mobile', 'email',
-                  'user_type', 'premium_user', 'audio_permission')
+        fields = (
+            'id',
+            'name',
+            'mobile',
+            'email',
+            'user_type',
+            'gold_user',
+            'diamond_user',
+            'audio_permission'
+        )
 
 
 class AuthSerializer(serializers.Serializer):
@@ -119,7 +128,7 @@ class GoogleLoginSerializer(serializers.Serializer):
         if token != config('SECURITY_TOKEN'):
             raise serializers.ValidationError('oops, something went wrong')
 
-        if user.user_type != 3:
+        if user.user_type not in [3, 5]:
             raise serializers.ValidationError('you have no permission')
 
         credentials = {

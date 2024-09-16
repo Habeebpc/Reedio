@@ -40,6 +40,9 @@ class Podcast(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     is_approved = models.BooleanField(default=False)
+    price = models.FloatField(null=True, blank=True)
+    is_gold = models.BooleanField(default=False)
+    is_diamond = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -85,3 +88,10 @@ class DummyImage(models.Model):
 class Settings(models.Model):
     app_status = models.CharField(
         max_length=30, choices=APP_STATUS, default='active')
+
+
+class Package(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    amount = models.FloatField()
+    validity = models.IntegerField()

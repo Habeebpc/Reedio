@@ -15,7 +15,8 @@ from customer.views import (
     SettingsApiView,
     FavoriteAudioListCreateView,
     FavoriteAudioRemoveView,
-    AudioProgressApiView
+    AudioProgressApiView,
+    RedeemAccessCodeView
 )
 
 urlpatterns = [
@@ -34,5 +35,6 @@ urlpatterns = [
     path('settings/', SettingsApiView.as_view()),
     path('favorite-audios/', FavoriteAudioListCreateView.as_view()),
     path('favorite-audio/<int:pk>/remove', FavoriteAudioRemoveView.as_view()),
-    path('audio/<int:pk>/progress/', AudioProgressApiView.as_view())
+    path('audio/<int:pk>/progress/', AudioProgressApiView.as_view()),
+    path('redeem-access-code/', RedeemAccessCodeView.as_view())
 ]

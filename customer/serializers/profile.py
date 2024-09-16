@@ -7,16 +7,28 @@ from datetime import date, timedelta
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'email', 'mobile', 'premium_user')
+        fields = (
+            'name',
+            'email',
+            'mobile',
+            'gold_user',
+            'diamond_user',
+            'premium_expiry_date'
+        )
 
 
 class UpgradeToPremiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ()
+        fields = ('gold_user', 'diamond_user')
 
     def update(self, instance, validated_data):
-        instance.premium_user = True
+        instance.gold_user = validated_data.get(
+            'gold_user', instance.gold_user
+        )
+        instance.diamond_user = validated_data.get(
+            'diamond_user', instance.diamond_user
+        )
         today = date.today()
         instance.premium_start_date = today
         instance.premium_expiry_date = today + timedelta(days=365)
@@ -24,7 +36,10 @@ class UpgradeToPremiumSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['message'] = 'Successfully Upgraded To Premium'
+        if instance.gold_user:
+            rep['message'] = 'Successfully Upgraded to gold membership'
+        elif instance.diamond_user:
+            rep['message'] = 'Successfully Upgraded to diamond membership'
         return rep
 
 

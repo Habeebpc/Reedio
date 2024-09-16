@@ -28,8 +28,9 @@ url_patterns = [
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='docs'),
     path('api/auth/', include('user_auth.urls')),
     path('api/admin-panel/',  include('admin_panel.urls')),
-    path('api/app/',  include('customer.urls'))
-
+    path('api/app/',  include('customer.urls')),
+    path('api/partner/',  include('partner.urls')),
+    path('api/retailer/',  include('retailer.urls'))
 ]
 
 

@@ -3,7 +3,8 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveAPIView,
     DestroyAPIView,
-    UpdateAPIView
+    UpdateAPIView,
+    CreateAPIView
 )
 from customer.serializers import (
     CategoryListSerializer,
@@ -12,7 +13,8 @@ from customer.serializers import (
     PodcastDetailSerializer,
     AddToFavoriteSerializer,
     AddToFavoriteAudioSerializer,
-    AudioProgressSerializer
+    AudioProgressSerializer,
+    RedeemAccessCodeSerializer
 )
 
 from admin_panel.models import Category, SubCategory, Podcast
@@ -20,6 +22,7 @@ from customer.models import Favorite, FavoriteAudio, AudioProgress
 from user_auth.permission import IsCustomerUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+from podcast_app.response import SuccessResponse, ErrorResponse
 
 
 class CategoryListView(ListAPIView):
@@ -43,6 +46,9 @@ class PodCastListView(ListAPIView):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['category', 'sub_category']
     search_fields = ['name', 'description']
+
+    def get_serializer_context(self):
+        return {'user': self.request.user}
 
 
 class PodCastDetailView(RetrieveAPIView):
@@ -104,3 +110,18 @@ class AudioProgressApiView(UpdateAPIView):
             user=self.request.user,
             audio__id=self.kwargs.get('pk')
         ).first()
+
+
+class RedeemAccessCodeView(CreateAPIView):
+    permission_classes = [IsCustomerUser]
+    serializer_class = RedeemAccessCodeSerializer
+
+    def post(self, request):
+        serializer = RedeemAccessCodeSerializer(
+            context={'user': self.request.user}, data=request.data)
+        if serializer.is_valid():
+            return SuccessResponse(data=serializer.validated_data)
+        error = 'Error'
+        if serializer.errors.get('non_field_errors'):
+            error = serializer.errors["non_field_errors"][0]
+        return ErrorResponse(message=error)

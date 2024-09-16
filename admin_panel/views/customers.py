@@ -16,7 +16,7 @@ class CustomersListView(ListAPIView):
     serializer_class = CustomersListSerializer
     queryset = User.objects.filter(user_type=3).order_by('-id')
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['premium_user', ]
+    filterset_fields = ['gold_user', 'diamond_user']
     search_fields = ['name', 'mobile', 'email']
 
 
