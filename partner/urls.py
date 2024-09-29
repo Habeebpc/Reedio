@@ -10,7 +10,8 @@ from partner.views import (
     DeletedPlayListView,
     RetailerListCreateView,
     RetailerStatusUpdateSerializer,
-    AccessCodeEnrolledView
+    AccessCodeEnrolledView,
+    PodcastAnalyticsView
 
 )
 
@@ -26,5 +27,6 @@ urlpatterns = [
     path('deleted-playlists/', DeletedPlayListView.as_view()),
     path('retailers/', RetailerListCreateView.as_view()),
     path('retailer/<int:pk>/', RetailerStatusUpdateSerializer.as_view()),
-    path('access-codes/', AccessCodeEnrolledView.as_view())
+    path('access-codes/', AccessCodeEnrolledView.as_view()),
+    path('podcast/analytics/', PodcastAnalyticsView.as_view()),
 ]

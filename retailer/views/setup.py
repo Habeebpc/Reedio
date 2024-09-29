@@ -1,13 +1,15 @@
 from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
-    ListCreateAPIView
+    ListCreateAPIView,
+    UpdateAPIView
 )
 from retailer.serializers import (
     MyPartnersSerializer,
     MyPartnerPodcastListSerializer,
     MyPartnerPodcastDetailSerializer,
-    AccessCodeGenerationSerializer
+    AccessCodeGenerationSerializer,
+    AccessCodeSentSerializer
 )
 from user_auth.permission import IsRetailerUser
 from user_auth.models import PartnerAndRetailer
@@ -63,3 +65,10 @@ class AccessCodeGenerationView(ListCreateAPIView):
 
     def get_serializer_context(self):
         return {'user': self.request.user}
+
+
+class AccessCodeSentView(UpdateAPIView):
+    permission_classes = [IsRetailerUser]
+    serializer_class = AccessCodeSentSerializer
+    queryset = AccessCode.objects.filter(sent_to__isnull=True)
+    allowed_methods = ['PUT']

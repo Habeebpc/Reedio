@@ -7,6 +7,10 @@ from admin_panel.models import (
     Package
 )
 from django.shortcuts import get_object_or_404
+from retailer.models import AccessCode
+from customer.models import AudioProgress
+from user_auth.models import User
+from django.db.models import Q
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -119,3 +123,85 @@ class DeletedPlayListSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayList
         fields = ('id', 'podcast', 'name', 'description', 'audio_url')
+
+
+class PodcastAnalyticsSerializer(serializers.ModelSerializer):
+    created_user = serializers.SerializerMethodField()
+    premium_users = serializers.SerializerMethodField()
+    coupon_users = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Podcast
+        fields = (
+            'id',
+            'created_user',
+            'category',
+            'sub_category',
+            'name',
+            'description',
+            'image',
+            'premium_users',
+            'coupon_users'
+        )
+
+    def get_created_user(self, obj):
+        if obj.created_by:
+            return {'id': obj.created_by.id, 'name': obj.created_by.name}
+        return {'id': None, 'name': None}
+
+    def get_premium_users(self, obj):
+        try:
+            if obj.is_gold and not obj.is_diamond:
+                premium_users = User.objects.filter(
+                    Q(gold_user=True) | Q(diamond_user=True)
+                ).distinct()
+            elif obj.is_diamond:
+                premium_users = User.objects.filter(
+                    diamond_user=True
+                )
+            elif obj.is_gold:
+                premium_users = User.objects.filter(
+                    gold_user=True
+                )
+            count = premium_users.count()
+            total_playlist = PlayList.objects.filter(podcast=obj).count()
+            playlist_completed = AudioProgress.objects.filter(
+                audio__podcast=obj,
+                is_completed=True
+            ).count()
+            total_playlist_to_play = total_playlist * count
+
+            try:
+                total = (playlist_completed/total_playlist_to_play) * 100
+            except Exception:
+                total = 0
+
+            return {
+                'total_users': count,
+                'completed_percentage': total
+            }
+        except Exception:
+            return None
+
+    def get_coupon_users(self, obj):
+        access_code = AccessCode.objects.filter(
+            podcast=obj,
+            redeemed_by__isnull=False
+        )
+        count = access_code.count()
+        total_playlist = PlayList.objects.filter(podcast=obj).count()
+        playlist_completed = AudioProgress.objects.filter(
+            audio__podcast=obj,
+            is_completed=True
+        ).count()
+        total_playlist_to_play = total_playlist * count
+
+        try:
+            total = (playlist_completed/total_playlist_to_play) * 100
+        except Exception:
+            total = 0
+
+        return {
+            'total_users': count,
+            'completed_percentage': total
+        }

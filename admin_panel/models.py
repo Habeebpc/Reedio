@@ -95,3 +95,4 @@ class Package(models.Model):
     description = models.TextField(null=True, blank=True)
     amount = models.FloatField()
     validity = models.IntegerField()
+

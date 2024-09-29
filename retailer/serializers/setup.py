@@ -89,3 +89,14 @@ class AccessCodeGenerationSerializer(serializers.ModelSerializer):
             'date': instance.redeemed_on
         } if instance.redeemed_by else None
         return rep
+
+
+class AccessCodeSentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccessCode
+        fields = ('sent_to',)
+
+    def to_representation(self, instance):
+        return {
+            'message': f'Access code successfully sent to {instance.sent_to}'
+        }

@@ -13,7 +13,8 @@ from admin_panel.serializers import (
     AddPlayListToPodcastSerializer,
     RestorePlayListSerializer,
     DeletedPlayListSerializer,
-    PackageSerializer
+    PackageSerializer,
+    PodcastAnalyticsSerializer
 )
 
 from admin_panel.models import (
@@ -148,3 +149,14 @@ class RestorePlayListView(UpdateAPIView):
     serializer_class = RestorePlayListSerializer
     queryset = PlayList.objects.all()
     allowed_methods = ['PUT', ]
+
+
+class PodcastAnalyticsView(ListAPIView):
+    permission_classes = [IsAdminOrSubAdminUser]
+    serializer_class = PodcastAnalyticsSerializer
+
+    def get_queryset(self):
+        if self.request.user.user_type == 2:
+            return Podcast.objects.filter(
+                created_by=self.request.user).order_by('-id')
+        return Podcast.objects.all().order_by('-id')

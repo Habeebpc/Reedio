@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from admin_panel.models import Category, SubCategory, Podcast, PlayList
-from customer.models import Favorite, FavoriteAudio, AudioProgress
+from customer.models import (
+    Favorite,
+    FavoriteAudio,
+    AudioProgress,
+    PurchasePodcast
+)
 from django.shortcuts import get_object_or_404
 from retailer.models import AccessCode
 from datetime import datetime, date
@@ -45,6 +50,10 @@ class PodcastListSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_purchased(self, obj):
+        if PurchasePodcast.objects.filter(
+            podcast=obj, user=self.context['user']
+        ).exists():
+            return True
         return False
 
 
@@ -152,7 +161,7 @@ class AddToFavoriteAudioSerializer(serializers.ModelSerializer):
 class AudioProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = AudioProgress
-        fields = ('progress',)
+        fields = ('progress', 'is_completed')
 
 
 class RedeemAccessCodeSerializer(serializers.Serializer):
@@ -174,3 +183,13 @@ class RedeemAccessCodeSerializer(serializers.Serializer):
         podcast = coupon.podcast.name
 
         return {'message': f'Congrats, {podcast} unlocked successfully!!'}
+
+
+class PurchasePodcastSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchasePodcast
+        fields = ('podcast', 'transaction_id')
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['user']
+        return super().create(validated_data)

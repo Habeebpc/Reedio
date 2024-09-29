@@ -10,7 +10,8 @@ from admin_panel.serializers import (
     PodcastSerializer,
     AddPlayListToPodcastSerializer,
     DeletedPlayListSerializer,
-    PackageSerializer
+    PackageSerializer,
+    PodcastAnalyticsSerializer
 )
 
 from admin_panel.models import (
@@ -108,3 +109,12 @@ class DeletedPlayListView(ListAPIView):
 
     def get_serializer_context(self):
         return {'user': self.request.user}
+
+
+class PodcastAnalyticsView(ListAPIView):
+    permission_classes = [IsPartnerUser]
+    serializer_class = PodcastAnalyticsSerializer
+
+    def get_queryset(self):
+        return Podcast.objects.filter(
+            created_by=self.request.user).order_by('-id')

@@ -14,11 +14,16 @@ from customer.serializers import (
     AddToFavoriteSerializer,
     AddToFavoriteAudioSerializer,
     AudioProgressSerializer,
-    RedeemAccessCodeSerializer
+    RedeemAccessCodeSerializer,
+    PurchasePodcastSerializer
 )
 
 from admin_panel.models import Category, SubCategory, Podcast
-from customer.models import Favorite, FavoriteAudio, AudioProgress
+from customer.models import (
+    Favorite,
+    FavoriteAudio,
+    AudioProgress
+)
 from user_auth.permission import IsCustomerUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
@@ -125,3 +130,13 @@ class RedeemAccessCodeView(CreateAPIView):
         if serializer.errors.get('non_field_errors'):
             error = serializer.errors["non_field_errors"][0]
         return ErrorResponse(message=error)
+
+
+class PurchasePodcastView(CreateAPIView):
+    permission_classes = [IsCustomerUser]
+    serializer_class = PurchasePodcastSerializer
+
+    def get_serializer_context(self):
+        return {
+            'user': self.request.user,
+        }
