@@ -19,6 +19,7 @@ class AccessCode(models.Model):
     )
     code = models.CharField(max_length=15)
     sent_to = models.CharField(max_length=13, null=True, blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
     validity = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)

@@ -69,7 +69,7 @@ class MyPartnerPodcastDetailSerializer(serializers.ModelSerializer):
 class AccessCodeGenerationSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccessCode
-        fields = ('id', 'podcast')
+        fields = ('id', 'podcast', 'sent_to', 'name')
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['user']
@@ -83,20 +83,10 @@ class AccessCodeGenerationSerializer(serializers.ModelSerializer):
         rep['podcast'] = instance.podcast.name
         rep['code'] = instance.code
         rep['sent_to'] = instance.sent_to
+        rep['name'] = instance.name
         rep['redeemed_by'] = {
             'name': instance.redeemed_by.name,
             'mobile': instance.redeemed_by.mobile,
             'date': instance.redeemed_on
         } if instance.redeemed_by else None
         return rep
-
-
-class AccessCodeSentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AccessCode
-        fields = ('sent_to',)
-
-    def to_representation(self, instance):
-        return {
-            'message': f'Access code successfully sent to {instance.sent_to}'
-        }
