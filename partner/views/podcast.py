@@ -23,6 +23,7 @@ from admin_panel.models import (
 )
 from user_auth.permission import IsPartnerUser
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from podcast_app.response import SuccessResponse
 
 
@@ -114,6 +115,9 @@ class DeletedPlayListView(ListAPIView):
 class PodcastAnalyticsView(ListAPIView):
     permission_classes = [IsPartnerUser]
     serializer_class = PodcastAnalyticsSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['category', 'sub_category']
+    search_fields = ['name',]
 
     def get_queryset(self):
         return Podcast.objects.filter(

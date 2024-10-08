@@ -205,3 +205,31 @@ class PodcastAnalyticsSerializer(serializers.ModelSerializer):
             'total_users': count,
             'completed_percentage': total
         }
+
+
+class AdminAccessCodeEnrolledSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(source='created_on')
+    created_by = serializers.CharField(source='created_by.name')
+    partner = serializers.CharField(source='podcast.created_by.name')
+    podcast = serializers.CharField(source='podcast.name')
+    redeemed_by = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AccessCode
+        fields = (
+            'id',
+            'date',
+            'created_by',
+            'partner',
+            'podcast',
+            'code',
+            'sent_to',
+            'redeemed_by'
+        )
+
+    def get_redeemed_by(self, obj):
+        return {
+            'name': obj.redeemed_by.name,
+            'mobile': obj.redeemed_by.mobile,
+            'date': obj.redeemed_on
+        } if obj.redeemed_by else None

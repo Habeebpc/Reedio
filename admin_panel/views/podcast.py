@@ -14,7 +14,8 @@ from admin_panel.serializers import (
     RestorePlayListSerializer,
     DeletedPlayListSerializer,
     PackageSerializer,
-    PodcastAnalyticsSerializer
+    PodcastAnalyticsSerializer,
+    AdminAccessCodeEnrolledSerializer
 )
 
 from admin_panel.models import (
@@ -26,7 +27,11 @@ from admin_panel.models import (
 )
 from user_auth.permission import IsAdminOrSubAdminUser, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from podcast_app.response import SuccessResponse
+from retailer.models import AccessCode
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class CategoryListCreateView(ListCreateAPIView):
@@ -154,9 +159,47 @@ class RestorePlayListView(UpdateAPIView):
 class PodcastAnalyticsView(ListAPIView):
     permission_classes = [IsAdminOrSubAdminUser]
     serializer_class = PodcastAnalyticsSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['category', 'sub_category']
+    search_fields = ['name',]
 
     def get_queryset(self):
         if self.request.user.user_type == 2:
             return Podcast.objects.filter(
                 created_by=self.request.user).order_by('-id')
         return Podcast.objects.all().order_by('-id')
+
+
+class AccessCodeEnrolledView(ListAPIView):
+    permission_classes = [IsAdminOrSubAdminUser]
+    serializer_class = AdminAccessCodeEnrolledSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['podcast', 'created_by', 'podcast__created_by']
+    search_fields = [
+        'podcast__name',
+        'created_by__name',
+        'podcast__created_by__name'
+    ]
+
+    def get_queryset(self):
+        return AccessCode.objects.all()
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter(
+            'podcast', openapi.IN_QUERY,
+            description="Filter by podcast",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            'created_by', openapi.IN_QUERY,
+            description="Filter by retailer",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            'podcast__created_by', openapi.IN_QUERY,
+            description="Filter by partner",
+            type=openapi.TYPE_INTEGER
+        )
+    ])
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)

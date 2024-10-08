@@ -26,7 +26,8 @@ from admin_panel.views import (
     PartnerUpdateView,
     PackageListCreateView,
     PackageUpdateView,
-    PodcastAnalyticsView
+    PodcastAnalyticsView,
+    AccessCodeEnrolledView
 )
 
 urlpatterns = [
@@ -54,6 +55,7 @@ urlpatterns = [
     path('deleted-playlists/', DeletedPlayListView.as_view()),
     path('restore-playlist/<int:pk>/', RestorePlayListView.as_view()),
     path('podcast/analytics/', PodcastAnalyticsView.as_view()),
+    path('access-codes/', AccessCodeEnrolledView.as_view()),
 
     # customer
     path('customers/', CustomersListView.as_view()),
