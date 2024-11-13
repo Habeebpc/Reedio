@@ -9,7 +9,7 @@ import json
 from decouple import config
 
 
-def generate_random_string(length=15):
+def generate_random_string(length=7):
     characters = string.ascii_letters.upper() + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 

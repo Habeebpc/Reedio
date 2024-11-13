@@ -22,7 +22,7 @@ class RetailerSerializer(serializers.ModelSerializer):
         ).exists():
             raise serializers.ValidationError('Retailer already added')
 
-        if User.objects.filter(mobile=mobile).exclude(user_type=5).exists():
+        if User.objects.filter(email=email).exclude(user_type=5).exists():
             raise serializers.ValidationError('Email already exists')
         else:
             if User.objects.filter(mobile=mobile).exists():

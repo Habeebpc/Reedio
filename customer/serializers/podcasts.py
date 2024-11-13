@@ -103,11 +103,13 @@ class PodcastDetailSerializer(serializers.ModelSerializer):
     play_list = serializers.SerializerMethodField()
     favorite = serializers.SerializerMethodField()
     favorite_id = serializers.SerializerMethodField()
+    is_redeemed = serializers.SerializerMethodField()
 
     class Meta:
         model = Podcast
         fields = ('id', 'image', 'name', 'description',
-                  'updated_on', 'play_list', 'favorite', 'favorite_id')
+                  'updated_on', 'play_list', 'favorite',
+                  'favorite_id', 'is_redeemed')
 
     def get_play_list(self, obj):
         return PlayListInPodcast(
@@ -128,6 +130,15 @@ class PodcastDetailSerializer(serializers.ModelSerializer):
         if fav.exists():
             return fav.last().id
         return None
+
+    def get_is_redeemed(self, obj):
+        if AccessCode.objects.filter(
+            podcast=obj,
+                redeemed_by=self.context['user'],
+                validity__gte=date.today()
+        ).exists():
+            return True
+        return False
 
 
 class AddToFavoriteSerializer(serializers.ModelSerializer):
