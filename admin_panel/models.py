@@ -43,6 +43,7 @@ class Podcast(models.Model):
     price = models.FloatField(null=True, blank=True)
     is_gold = models.BooleanField(default=False)
     is_diamond = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -95,4 +96,3 @@ class Package(models.Model):
     description = models.TextField(null=True, blank=True)
     amount = models.FloatField()
     validity = models.IntegerField()
-

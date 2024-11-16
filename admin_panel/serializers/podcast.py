@@ -52,10 +52,21 @@ class PodcastSerializer(serializers.ModelSerializer):
             'price',
             'is_gold',
             'is_diamond',
+            'is_private',
             'image',
             'created_user',
             'play_list'
         )
+
+    def validate(self, attrs):
+        if attrs['is_private']:
+            if (attrs['is_gold'] or attrs['is_diamond']):
+                message = "private podcast can't be under gold or diamond"
+                raise serializers.ValidationError(message)
+        if not (attrs['is_private'] or attrs['is_gold'] or attrs['is_diamond']):
+            raise serializers.ValidationError(
+                'please select any premium type or mark it as a private podcast')
+        return super().validate(attrs)
 
     def get_created_user(self, obj):
         if obj.created_by:
