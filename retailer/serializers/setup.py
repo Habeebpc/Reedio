@@ -14,7 +14,7 @@ def generate_random_string(length=7):
     return ''.join(random.choice(characters) for _ in range(length))
 
 
-def send_whatsapp_message(mobile, name, code, podcast_name):
+def send_whatsapp_message(mobile, name, code, podcast_name, podcast_id):
 
     url = 'https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/'
 
@@ -54,7 +54,7 @@ def send_whatsapp_message(mobile, name, code, podcast_name):
                             "button_1": {
                                 "subtype": "url",
                                 "type": "text",
-                                "value": "https://play.google.com/store/apps/details?id=com.podcast.reedio"
+                                "value": podcast_id
                             }
                         }
                     }
@@ -137,7 +137,8 @@ class AccessCodeGenerationSerializer(serializers.ModelSerializer):
             instance.sent_to,
             instance.name,
             instance.code,
-            instance.podcast.name
+            instance.podcast.name,
+            instance.podcast.id
         )
         return instance
 

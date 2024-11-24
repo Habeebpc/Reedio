@@ -63,9 +63,6 @@ class PodcastSerializer(serializers.ModelSerializer):
             if (attrs['is_gold'] or attrs['is_diamond']):
                 message = "private podcast can't be under gold or diamond"
                 raise serializers.ValidationError(message)
-        if not (attrs['is_private'] or attrs['is_gold'] or attrs['is_diamond']):
-            raise serializers.ValidationError(
-                'please select any premium type or mark it as a private podcast')
         return super().validate(attrs)
 
     def get_created_user(self, obj):
