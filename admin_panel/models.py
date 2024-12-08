@@ -44,6 +44,7 @@ class Podcast(models.Model):
     is_gold = models.BooleanField(default=False)
     is_diamond = models.BooleanField(default=False)
     is_private = models.BooleanField(default=False)
+    position = models.FloatField(default=0)
 
     def __str__(self):
         return self.name

@@ -56,7 +56,7 @@ class PodcastListCreateView(ListCreateAPIView):
 
     def get_queryset(self):
         return Podcast.objects.filter(
-            created_by=self.request.user).order_by('-id')
+            created_by=self.request.user).order_by('position')
 
     def get_serializer_context(self):
         return {'user': self.request.user}

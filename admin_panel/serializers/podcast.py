@@ -55,6 +55,7 @@ class PodcastSerializer(serializers.ModelSerializer):
             'is_private',
             'image',
             'created_user',
+            'position',
             'play_list'
         )
 

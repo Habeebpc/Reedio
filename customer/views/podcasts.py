@@ -47,7 +47,7 @@ class SubCategoryListView(ListAPIView):
 class PodCastListView(ListAPIView):
     permission_classes = [IsCustomerUser]
     serializer_class = PodcastListSerializer
-    queryset = Podcast.objects.filter(is_approved=True).order_by('-id')
+    queryset = Podcast.objects.filter(is_approved=True).order_by('position')
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['category', 'sub_category']
     search_fields = ['name', 'description']
@@ -59,7 +59,7 @@ class PodCastListView(ListAPIView):
 class PodCastDetailView(RetrieveAPIView):
     permission_classes = [IsCustomerUser]
     serializer_class = PodcastDetailSerializer
-    queryset = Podcast.objects.filter(is_approved=True).order_by('-id')
+    queryset = Podcast.objects.filter(is_approved=True)
 
     def get_serializer_context(self):
         return {'user': self.request.user}
