@@ -1,8 +1,14 @@
 from django.contrib import admin
-from customer.models import Favorite, FavoriteAudio, AudioProgress
+from customer.models import (
+    Favorite,
+    FavoriteAudio,
+    AudioProgress,
+    PurchasePodcast
+)
 
 admin.site.register(Favorite)
 admin.site.register(FavoriteAudio)
+admin.site.register(PurchasePodcast)
 
 
 class AudioProgressAdmin(admin.ModelAdmin):

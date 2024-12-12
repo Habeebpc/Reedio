@@ -8,7 +8,7 @@ from admin_panel.models import (
 )
 from django.shortcuts import get_object_or_404
 from retailer.models import AccessCode
-from customer.models import AudioProgress
+from customer.models import AudioProgress, PurchasePodcast
 from user_auth.models import User
 from django.db.models import Q
 
@@ -138,6 +138,7 @@ class PodcastAnalyticsSerializer(serializers.ModelSerializer):
     created_user = serializers.SerializerMethodField()
     premium_users = serializers.SerializerMethodField()
     coupon_users = serializers.SerializerMethodField()
+    purchased_users = serializers.SerializerMethodField()
 
     class Meta:
         model = Podcast
@@ -150,7 +151,8 @@ class PodcastAnalyticsSerializer(serializers.ModelSerializer):
             'description',
             'image',
             'premium_users',
-            'coupon_users'
+            'coupon_users',
+            'purchased_users'
         )
 
     def get_created_user(self, obj):
@@ -198,6 +200,28 @@ class PodcastAnalyticsSerializer(serializers.ModelSerializer):
             redeemed_by__isnull=False
         )
         count = access_code.count()
+        total_playlist = PlayList.objects.filter(podcast=obj).count()
+        playlist_completed = AudioProgress.objects.filter(
+            audio__podcast=obj,
+            is_completed=True
+        ).count()
+        total_playlist_to_play = total_playlist * count
+
+        try:
+            total = (playlist_completed/total_playlist_to_play) * 100
+        except Exception:
+            total = 0
+
+        return {
+            'total_users': count,
+            'completed_percentage': total
+        }
+
+    def get_purchased_users(self, obj):
+        purchase = PurchasePodcast.objects.filter(
+            podcast=obj,
+        )
+        count = purchase.count()
         total_playlist = PlayList.objects.filter(podcast=obj).count()
         playlist_completed = AudioProgress.objects.filter(
             audio__podcast=obj,
