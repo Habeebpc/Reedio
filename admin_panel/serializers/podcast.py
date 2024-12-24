@@ -266,3 +266,32 @@ class AdminAccessCodeEnrolledSerializer(serializers.ModelSerializer):
             'mobile': obj.redeemed_by.mobile,
             'date': obj.redeemed_on
         } if obj.redeemed_by else None
+
+
+class PodcastPurchaseDetailSerializer(serializers.ModelSerializer):
+    purchased_users = serializers.SerializerMethodField()
+    total_amount = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Podcast
+        fields = (
+            'purchased_users',
+            'total_amount'
+        )
+
+    def get_purchased_users(self, obj):
+        year = self.context.get('year')
+        month = self.context.get('month')
+        purchase = PurchasePodcast.objects.filter(
+            podcast=obj,
+        )
+        if year:
+            purchase = purchase.filter(created_on__year=year)
+        if month:
+            purchase = purchase.filter(created_on__month=month)
+
+        self.count = purchase.count()
+        return self.count
+
+    def get_total_amount(self, obj):
+        return self.count * obj.price

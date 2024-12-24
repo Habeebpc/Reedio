@@ -2,7 +2,8 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView,
-    ListAPIView
+    ListAPIView,
+    RetrieveAPIView
 )
 from admin_panel.serializers import (
     CategorySerializer,
@@ -15,7 +16,8 @@ from admin_panel.serializers import (
     DeletedPlayListSerializer,
     PackageSerializer,
     PodcastAnalyticsSerializer,
-    AdminAccessCodeEnrolledSerializer
+    AdminAccessCodeEnrolledSerializer,
+    PodcastPurchaseDetailSerializer
 )
 
 from admin_panel.models import (
@@ -25,6 +27,7 @@ from admin_panel.models import (
     PlayList,
     Package
 )
+from admin_panel.filters import PodcastPurchaseFilter
 from user_auth.permission import IsAdminOrSubAdminUser, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
@@ -203,3 +206,16 @@ class AccessCodeEnrolledView(ListAPIView):
     ])
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+
+class PodcastPurchaseDetailView(RetrieveAPIView):
+    permission_classes = [IsAdminOrSubAdminUser]
+    serializer_class = PodcastPurchaseDetailSerializer
+    queryset = Podcast.objects.all()
+    filter_backends = [PodcastPurchaseFilter,]
+
+    def get_serializer_context(self):
+        return {
+            'year': self.request.query_params.get('year', None),
+            'month': self.request.query_params.get('month', None)
+        }
